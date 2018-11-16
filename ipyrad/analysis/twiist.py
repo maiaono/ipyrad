@@ -30,7 +30,7 @@ class Twiist():
         data,
         imap, 
         minmap=None,
-        # chunksize=20, 
+        chunksize=0, 
         ntests=100, 
         minsnps=1,
         randomseed=None,
@@ -51,7 +51,15 @@ class Twiist():
             for i in v:
                 self.rmap[i] = k  
         self.ntests = ntests
-        # self.chunksize = chunksize
+        ## give default chunksize values if not given
+        ## default chunksizes based on whether using ref
+        if chunksize == 0:
+            if self.reference:
+                self.chunksize = 50
+            else:
+                self.chunksize = 20
+        else:
+            self.chunksize = chunksize
         self.minsnps = minsnps
         
         ## fill mindict
@@ -83,7 +91,8 @@ class Twiist():
         for idx, loc in enumerate(liter):
             lines = loc.split("\n")
             snpline = loc.split('|')[-1]
-            locidx, chidx, pos = snpline.split(":")            
+            if len(snpline.split(":")) == 3:
+                locidx, chidx, pos = snpline.split(":")            
             names = [i.split()[0] for i in lines[:-1]]
 
             ## check coverage
@@ -99,7 +108,6 @@ class Twiist():
                 pos1, pos2 = pos.split('-')
                 refinfo = (idx, chidx, pos1, pos2)
                 idxs.append(refinfo) 
-                print(refinfo)
         return idxs
 
 
