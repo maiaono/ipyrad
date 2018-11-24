@@ -95,15 +95,13 @@ class Twiist():
                 locidx, chidx, pos = snpline.split(":")            
             names = [i.split()[0] for i in lines[:-1]]
 
-            ## check coverage
+            ## check coverage threshold
             coverage = 0
             for node in self.imap:
                 mincov = self.minmap[node]
                 if sum([i in names for i in self.imap[node]]) >= mincov:
                     coverage += 1
             
-            ## check that the coverage meets threshold
-            ## refinfo is not being added correctly....
             if coverage == len(self.imap.keys()):
                 pos1, pos2 = pos.split('-')
                 refinfo = (idx, chidx, pos1, pos2)
@@ -179,23 +177,50 @@ class Twiist():
         return seqdata
   
 
+    def get_all_windows(self, window):
 
-    def get_window_idxs(self, window):
+        all_window_idxs = {}
+
+        for seq in self.idxs:
+            locidx, chridx, pos1, pos2 = self.idxs[seq]
+
+            all_window_idxs[chridx] = get_window_idxs(window, chridx)
+
+        return all_window_idxs
+
+    
+
+    def get_window_idxs(self, window, chrom):
         "Returns locus idxs that are on same chrom and within chunksize(window)"
 
-        # get start position
-        locidx, chridx, pos1, pos2 = self.idxs[window]
+        window_idxs = []
 
-        # get end position
-        # endwindow = pos2 + self.chunksize
-        endwindow = pos2 + window
+        for seq in self.idxs:
+            locidx, chridx, pos1, pos2 = self.idxs[seq]
 
-        idxs = []
-        for tup in self.idxs:
-            if tup[1] == chridx:
-                if int(tup[3]) < int(endwindow):
-                    idxs.append(tup[0])
-        return idxs
+            endwindow = str(pos1 + window)
+
+            # add locus indices if on chrom and in range
+            if chridx == chrom:
+                if pos2 < endwindow:
+                    window_idxs.append(locidx)
+            else if chridx > chrom:
+                break
+
+        return window_idxs
+            # want to add lists
+        # # get start position
+        # locidx, chridx, pos1, pos2 = self.idxs[0]
+        # # get end position
+        # # endwindow = pos2 + self.chunksize
+        # endwindow = str(pos2 + window)
+
+        # idxs = []
+        # for tup in self.idxs:
+        #     if tup[1] == chridx:
+        #         if int(tup[3]) < int(endwindow):
+        #             idxs.append(tup[0])
+        # return idxs
 
 
 
