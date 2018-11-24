@@ -178,13 +178,17 @@ class Twiist():
   
 
     def get_all_windows(self, window):
+        "Returns all good locus idxs for all chromosomes"
 
         all_window_idxs = {}
 
         for seq in self.idxs:
             locidx, chridx, pos1, pos2 = self.idxs[seq]
 
-            all_window_idxs[chridx] = get_window_idxs(window, chridx)
+            # this is looking buggy... should add if statement
+            # so that chridxes are not repeated
+            if chridx not in all_window_idxs:
+                all_window_idxs[chridx] = get_window_idxs(window, chridx)
 
         return all_window_idxs
 
