@@ -178,17 +178,17 @@ class Twiist():
   
 
     def get_all_windows(self, window):
-        "Returns all good locus idxs for all chromosomes"
+        """Returns all appropriate locus idxs for all chromosomes"""
 
         all_window_idxs = {}
 
-        for seq in self.idxs:
-            locidx, chridx, pos1, pos2 = self.idxs[seq]
-
-            # this is looking buggy... should add if statement
-            # so that chridxes are not repeated
+        for seq, item in enumerate(self.idxs):
+            chridx = item[1]
+            
+            # check that the chromosome not already in list
             if chridx not in all_window_idxs:
-                all_window_idxs[chridx] = get_window_idxs(window, chridx)
+                # get all appropriate loci for chromosome
+                all_window_idxs[chridx] = self.get_window_idxs(window, int(chridx))
 
         return all_window_idxs
 
@@ -215,20 +215,6 @@ class Twiist():
                 break
 
         return window_idxs
-            # want to add lists
-        # # get start position
-        # locidx, chridx, pos1, pos2 = self.idxs[0]
-        # # get end position
-        # # endwindow = pos2 + self.chunksize
-        # endwindow = str(pos2 + window)
-
-        # idxs = []
-        # for tup in self.idxs:
-        #     if tup[1] == chridx:
-        #         if int(tup[3]) < int(endwindow):
-        #             idxs.append(tup[0])
-        # return idxs
-
 
 
     def run_tree_inference(self, nexus, idx):
