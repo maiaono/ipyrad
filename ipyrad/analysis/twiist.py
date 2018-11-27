@@ -199,16 +199,19 @@ class Twiist():
 
         window_idxs = []
 
-        for seq in self.idxs:
-            locidx, chridx, pos1, pos2 = self.idxs[seq]
+        for seq, item in enumerate(self.idxs):
+            locidx = int(item[0])
+            chridx = int(item[1])
+            pos1 = int(item[2])
+            pos2 = int(item[3])
 
-            endwindow = str(pos1 + window)
+            endwindow = pos1 + window
 
             # add locus indices if on chrom and in range
             if chridx == chrom:
                 if pos2 < endwindow:
                     window_idxs.append(locidx)
-            else if chridx > chrom:
+            elif chridx > chrom:
                 break
 
         return window_idxs
